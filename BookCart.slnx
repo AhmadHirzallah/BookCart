@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Core/">
+    <Project Path="BookCart.Application/BookCart.Application.csproj" Id="2aa87152-6358-44ce-a8f8-ac7663695300" />
+    <Project Path="BookCart.Domain/BookCart.Domain.csproj" Id="d4f14c24-1c70-4b67-8ee8-9d22dcf6078a" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="BookCart.Infrastructure/BookCart.Infrastructure.csproj" Id="e28b6016-1ac6-4a1e-813a-832c307dcac1" />
+  </Folder>
+  <Folder Name="/src/Utility/">
+    <File Path="About.md" />
+  </Folder>
+  <Folder Name="/src/Web/">
+    <Project Path="BookCart.Web/BookCart.Web.csproj" />
+  </Folder>
+</Solution>

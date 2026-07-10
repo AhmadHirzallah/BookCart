@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>All</AnalysisMode>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!--//! This suppresses CS1591 => (missing XML comment for publicly visible member) -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <!--// ! Adding this package [SonarAnalyzer.CSharp] which enforce code quality to all of my projects (Web, Domain, Application, Infrastructure) -->
+  <!--// ! [.dcproj] is Docker Compose file so I want to exclude it -->
+  <ItemGroup Condition="'$(MSBuildProjectExtension)' != '.dcproj'">
+    <!--//> ```dotnet add .\src\DevHabits.Api\ package SonarAnalyzer.CSharp```-->
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
