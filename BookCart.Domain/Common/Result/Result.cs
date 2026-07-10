@@ -143,6 +143,9 @@ public class Result
 
     #region Implicit Operators
 
+    //! - Prof. Guide & Notes I made for Operators:
+    //*     - https://app.notion.com/p/C-Operators-Master-Guide-3990535d403680518152faeb6f8ab813?source=copy_link#3990535d403680a19a02dcd8ff9f637a
+
     public static implicit operator Result(Error error) => Failure(error);
 
     public static implicit operator Result(List<Error> errors) => Failure(errors);
