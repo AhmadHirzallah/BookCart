@@ -448,6 +448,9 @@ dotnet_diagnostic.IDE0161.severity = none
 #//! It is forcing me to: [ Use [[auto]] property ]
 dotnet_diagnostic.IDE0032.severity = none
 
+#//! This prevent the [fluent builder convention] (this IServiceCollection services) from return!
+dotnet_diagnostic.S3241.severity = none
+
 # TODO Comment Allowing
 dotnet_diagnostic.S1135.severity = none
 
