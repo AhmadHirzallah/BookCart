@@ -1,4 +1,4 @@
-﻿namespace BookCart.Domain.Common.Result.Errors;
+﻿namespace BookCart.Domain.Common.Results.Errors;
 
 //! 📖 §20 The Error struct — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d403680e98416fd1bf58fff53
 public readonly record struct Error
@@ -41,12 +41,18 @@ public readonly record struct Error
     //! 📖 §24 Error.None — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d4036801c9695ca80dffc233b
     public static readonly Error None = new Error(string.Empty, string.Empty, ErrorType.Failure);
 
-    //! 📖 §25 Error.NullValue — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d403680febc73f62be93f820f
-    public static readonly Error NullValue = new(
-        "Error.NullValue",
-        "A null or missing value was provided where a non-null value is required.",
-        ErrorType.Failure
-    );
+    //public static readonly Error NullValue = new(
+    //    "Error.NullValue",
+    //    "A null or missing value was provided where a non-null value is required.",
+    //    ErrorType.Failure
+    //);
+
+    public static Error NullValue(string property) =>
+        new(
+            $"Error.{property}.NullValue",
+            $"A null or missing value was provided for '{property}' where a non-null value is required.",
+            ErrorType.Failure
+        );
 
     //! 📖 §26 The typed factory methods — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d40368062ae16f17145f1f587
 
@@ -77,6 +83,10 @@ public readonly record struct Error
     /// <summary>An unexpected condition that should alert on-call (bugs, infra faults). → 500</summary>
     public static Error Unexpected(string code, string description) =>
         new Error(code, description, ErrorType.Unexpected);
+
+    //! Factory method: IF you have an [[Error]] type that doesn't fit the above categories (Validation, Forbidden, etc.), you can use this method to create a custom [[Error]] with a specific [[ErrorType]].
+    public static Error Create(string code, string description, ErrorType type) =>
+        new(code, description, type);
 
     #endregion Factory Pattern Methods
 }

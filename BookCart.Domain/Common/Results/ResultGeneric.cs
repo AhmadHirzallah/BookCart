@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BookCart.Domain.Common.Exceptions;
-using BookCart.Domain.Common.Result.Errors;
+using BookCart.Domain.Common.Results.Errors;
 
-namespace BookCart.Domain.Common.Result;
+namespace BookCart.Domain.Common.Results;
 
 //! 📖 §15 The Result<TValue> class — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d4036804fb528c8d171259f40
 public class Result<TValue> : Result
@@ -35,6 +35,7 @@ public class Result<TValue> : Result
 
 
     #endregion
+
 
     #region Methods
 
@@ -97,6 +98,7 @@ public class Result<TValue> : Result
 
 
     #endregion
+
 
     #region Implicit Operators
 

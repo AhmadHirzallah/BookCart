@@ -1,4 +1,4 @@
-﻿namespace BookCart.Domain.Common.Result.Errors;
+﻿namespace BookCart.Domain.Common.Results.Errors;
 
 //! 📖 §27 ErrorType - classification & HTTP mapping — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d403680d58118cc9c25fc551b
 public enum ErrorType

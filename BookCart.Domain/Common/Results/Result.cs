@@ -1,7 +1,7 @@
 ﻿using BookCart.Domain.Common.Exceptions;
-using BookCart.Domain.Common.Result.Errors;
+using BookCart.Domain.Common.Results.Errors;
 
-namespace BookCart.Domain.Common.Result;
+namespace BookCart.Domain.Common.Results;
 
 //! 📖 §4 The Result class — https://app.notion.com/p/Result-Pattern-Notes-3990535d403680109860fd410ff64c66?source=copy_link#3990535d403680829b97fe3b28f0e281
 public class Result
@@ -133,12 +133,40 @@ public class Result
     }
 
     public static Result<TValue> Create<TValue>(TValue? value) =>
-        value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
+        value is not null ? Success(value) : Failure<TValue>(Error.NullValue(nameof(value)));
 
     #endregion
 
 
     #endregion Static factory methods
+
+
+    #region Combine (applicative validation — aggregate many results into one)
+
+    /*
+     //! - THE shortcut for factories. Replaces the repeated "check each [[IsFailure]] after [[Create]], AddRange its Errors"
+     //!   dance with a SINGLE guard that collects ALL errors from every failed result at once.
+     //?    - Returns Success() only when EVERY result succeeded; otherwise one Failure carrying every error.
+     //?    - Because Result<TValue> derives from Result, you pass Result<CategoryName>, Result<Price>, ...
+     //?      straight in — each upcasts to Result with its errors intact. One method covers all value types.
+     //>    - After a successful Combine, read each result's .Value safely (they are all guaranteed success).
+    */
+    public static Result Combine(params ReadOnlySpan<Result> results)
+    {
+        var errors = new List<Error>();
+
+        foreach (Result result in results)
+        {
+            if (result.IsFailure)
+            {
+                errors.AddRange(result.Errors);
+            }
+        }
+
+        return errors.Count > 0 ? Failure(errors) : Success();
+    }
+
+    #endregion Combine (applicative validation — aggregate many results into one)
 
 
     #region Implicit Operators
