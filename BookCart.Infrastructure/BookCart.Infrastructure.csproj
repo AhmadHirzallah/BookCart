@@ -10,9 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\Configuration\" />
-    <Folder Include="Persistence\Connections\" />
-    <Folder Include="Persistence\DbContexts\" />
+    <Folder Include="Persistence\Configuration\Categories\" />
+    <Folder Include="Persistence\Configuration\Books\" />
+    <Folder Include="Persistence\Configuration\AbstractBaseEntities\" />
+    <Folder Include="Persistence\Configuration\Orders\" />
+    <Folder Include="Persistence\Configuration\Users\" />
     <Folder Include="Persistence\Interceptors\" />
     <Folder Include="Persistence\TypeHandlers\" />
     <Folder Include="Persistence\Seeding\" />
@@ -23,5 +25,19 @@
     <Folder Include="Services\Emailing\" />
     <Folder Include="Services\Identity\" />
     <Folder Include="Services\Jwt\" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- ====  [Start 🟢 of Database Section]: (1. [Dapper] || 2.[SqlClient for SQL Server] || 3.[EF] || 4. [EF SqlServer] ) ========== -->
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <!-- ====  [END 🚨 of Database Section]: (1. [Dapper] || 2.[SqlClient for SQL Server] || 3.[EF] || 4. [EF SqlServer] ) ========== -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
 </Project>
