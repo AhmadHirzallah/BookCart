@@ -23,5 +23,6 @@ public interface IBaseRepository<TEntity, TIdKeyType>
 
     //! //! [Hard Delete]; For [Soft Delete] use: [AMasterEntity.MarkAsDeleted()]
     Task DeleteAsync(TEntity entity, CancellationToken ct = default);
+
     #endregion Writing
 }
