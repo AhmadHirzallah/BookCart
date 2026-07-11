@@ -1,4 +1,4 @@
-﻿using BookCart.Domain.Common.Result.Errors;
+﻿using BookCart.Domain.Common.Results.Errors;
 
 namespace BookCart.Domain.Common.Exceptions;
 
