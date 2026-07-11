@@ -4,6 +4,8 @@ public abstract class ABaseEntity<TIdKeyType> : IEntity, IEquatable<ABaseEntity<
 {
     #region Class Members
 
+
+    //! Id is declared nullable on purpose: a brand-new entity is transient (no identity yet) until it's assigned an Id (e.g., by the database or a repository). This is standard in [[DDD]].
     public TIdKeyType? Id { get; init; }
 
     public override int GetHashCode() => Id is not null ? Id.GetHashCode() * 41 : 0;
@@ -15,7 +17,8 @@ public abstract class ABaseEntity<TIdKeyType> : IEntity, IEquatable<ABaseEntity<
         //!     No external code should ever be able to call [booking.RaiseDomainEvent(...)] directly.
         //!     🚨 This is a way to encapsulate the domain events and only allow the entity itself to raise domain events.
      */
-    protected void RaiseDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+    protected void RaiseDomainEvent(INotifyDomainEvent domainEvent) =>
+        _domainEvents.Add(domainEvent);
 
     #endregion Class Members
 
@@ -117,9 +120,9 @@ public abstract class ABaseEntity<TIdKeyType> : IEntity, IEquatable<ABaseEntity<
 
     #region Implementations of Contracts (Interfaces)
 
-    private readonly List<IDomainEvent> _domainEvents = [];
+    private readonly List<INotifyDomainEvent> _domainEvents = [];
 
-    public IReadOnlyList<IDomainEvent> GetDomainEvents()
+    public IReadOnlyList<INotifyDomainEvent> GetDomainEvents()
     {
         return [.. _domainEvents];
     }

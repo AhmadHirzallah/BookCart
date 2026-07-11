@@ -5,7 +5,7 @@
 //!     - RaiseDomainEvent is [protected] on AEntity<T> so only the entity itself decides when a domain event occurs. No external code can call booking.RaiseDomainEvent(...) directly.
 public interface IEntity
 {
-    IReadOnlyList<IDomainEvent> GetDomainEvents();
+    IReadOnlyList<INotifyDomainEvent> GetDomainEvents();
 
     void ClearDomainEvents();
 }
