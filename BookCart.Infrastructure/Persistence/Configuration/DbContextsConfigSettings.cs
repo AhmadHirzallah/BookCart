@@ -11,7 +11,7 @@ internal static class DbContextsConfigSettings
     internal static class TablesNames
     {
         internal const string Categories = "Categories";
-        internal const string Books = "Books"; //! Products table is named as Books in the database.
+        internal const string Books = "Books"; //! Products table is named as Book in the database.
         internal const string Orders = "Orders";
         internal const string Users = "Users";
         internal const string Roles = "Roles";

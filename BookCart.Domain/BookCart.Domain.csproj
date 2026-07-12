@@ -12,6 +12,5 @@
   <ItemGroup>
     <Folder Include="Entities\Categories\Enums\" />
     <Folder Include="Common\Shared\" />
-    <Folder Include="Entities\Products\" />
   </ItemGroup>
 </Project>

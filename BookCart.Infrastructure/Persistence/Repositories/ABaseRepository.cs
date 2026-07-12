@@ -178,7 +178,7 @@ internal abstract class ABaseRepository<TEntity, TIdKeyType> : IBaseRepository<T
 
         if (entity is null)
         {
-            //! implicit: Error → Result (failure)
+            //! Implicit: Error → Result (failure)
             return EntityStateErrors.NotFound(typeof(TEntity).Name);
         }
 
