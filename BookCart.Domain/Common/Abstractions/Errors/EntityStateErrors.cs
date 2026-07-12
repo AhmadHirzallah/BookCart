@@ -21,4 +21,14 @@ public static class EntityStateErrors
         "Entity.AlreadyDeleted",
         "The entity is already deleted."
     );
+
+    /*
+        //! NOT a readonly field like the others — the Code must carry WHICH aggregate was missing,
+        //! so it stays greppable and keeps the "Aggregate.Reason" convention: "Category.NotFound".
+        //?     - Callers pass typeof(TEntity).Name — that is how a GENERIC base repository produces an
+        //?       aggregate-specific code without ever referencing CategoryErrors / BookErrors.
+        //!     - The Description deliberately omits the id: never echo untrusted input back to the client.
+    */
+    public static Error NotFound(string entityName) =>
+        Error.NotFound($"{entityName}.NotFound", $"The requested {entityName} was not found.");
 }

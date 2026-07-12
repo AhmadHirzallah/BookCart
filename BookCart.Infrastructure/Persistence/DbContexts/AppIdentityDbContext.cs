@@ -1,3 +1,3 @@
 ﻿namespace BookCart.Infrastructure.Persistence.DbContexts;
 
-internal class AppIdentityDbContext;
+internal sealed class AppIdentityDbContext;

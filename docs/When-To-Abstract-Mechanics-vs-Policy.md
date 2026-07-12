@@ -1,11 +1,12 @@
 # When to Abstract, and When to STOP — Mechanics vs Policy (the capstone)
 
 > **The trilogy:**
+>
 > 1. `AStronglyTypedId` — abstracted the id mechanics. ✅ Correct.
 > 2. `ASingleValueObject<T>` — abstracted the single-value VO mechanics. ✅ Correct.
 > 3. **"Let's also make a base `Create` factory for all entities (Category, Product…)."** ❌ **Stop.**
 >
-> This doc explains *why the third one is a trap*, gives you a **decision framework** you can run on
+> This doc explains _why the third one is a trap_, gives you a **decision framework** you can run on
 > any future "should I abstract this?" question, and shows the **composition** techniques that give
 > you the reuse you actually want — without a god-base-class.
 
@@ -17,9 +18,9 @@
 >
 > An entity's `Create` is **pure policy** — different parameters, different cross-field invariants,
 > different domain events per aggregate. There is **no shared mechanic** in its body to extract.
-> The mechanics entities *do* share (identity, equality, the domain-event list) are **already**
+> The mechanics entities _do_ share (identity, equality, the domain-event list) are **already**
 > centralized — in `ABaseEntity` / `AMasterEntity`. That job is done. The factory is meant to be
-> per-aggregate, and keeping it that way is the *correct* design, not a missed abstraction.
+> per-aggregate, and keeping it that way is the _correct_ design, not a missed abstraction.
 
 Everything below proves this and shows what to build instead.
 
@@ -27,7 +28,7 @@ Everything below proves this and shows what to build instead.
 
 ## Part 1 — The one framework that answers all three cases
 
-Before abstracting *anything*, run it through this. Two axes, four quadrants:
+Before abstracting _anything_, run it through this. Two axes, four quadrants:
 
 ```
                     IDENTICAL across types?              DIFFERENT across types?
@@ -48,14 +49,14 @@ Before abstracting *anything*, run it through this. Two axes, four quadrants:
 
 Now drop your three cases onto it:
 
-| Case | What you wanted to share | Bucket | Verdict |
-|------|--------------------------|--------|---------|
-| Strongly-typed IDs | `Value`, `ToString`, format-check *mechanic* | Mechanics / Identical | ✅ Abstract base (`AStronglyTypedId`) |
-| Single-value VOs | `Value`, `ToString`, equality *mechanic* | Mechanics / Identical | ✅ Abstract base (`ASingleValueObject<T>`) |
-| **Entity factories** | **`Create` — params, invariants, events** | **Policy / Different** | ❌ **No base. Compose instead.** |
+| Case                 | What you wanted to share                     | Bucket                 | Verdict                                    |
+| -------------------- | -------------------------------------------- | ---------------------- | ------------------------------------------ |
+| Strongly-typed IDs   | `Value`, `ToString`, format-check _mechanic_ | Mechanics / Identical  | ✅ Abstract base (`AStronglyTypedId`)      |
+| Single-value VOs     | `Value`, `ToString`, equality _mechanic_     | Mechanics / Identical  | ✅ Abstract base (`ASingleValueObject<T>`) |
+| **Entity factories** | **`Create` — params, invariants, events**    | **Policy / Different** | ❌ **No base. Compose instead.**           |
 
-> **The law:** *Inheritance is for identical mechanics. Policy that differs is shared — if at all —
-> by composition.* "Prefer composition over inheritance" isn't a slogan here; it's the exact tool
+> **The law:** _Inheritance is for identical mechanics. Policy that differs is shared — if at all —
+> by composition._ "Prefer composition over inheritance" isn't a slogan here; it's the exact tool
 > switch this table dictates.
 
 ---
@@ -122,6 +123,7 @@ public static Result<Product> Create(
 ```
 
 **Now try to hoist a base `Create`:**
+
 - Return types differ (`Result<Category>` vs `Result<Product>`).
 - Parameter lists differ completely (arity, types, order).
 - The VOs constructed differ. The cross-field invariants differ (`Product` has one; `Category` has none).
@@ -131,33 +133,33 @@ public static Result<Product> Create(
 **The only thing repeated is the _shape_:** `collect errors → validate each VO → check invariants →
 if errors return them → construct → raise event → return`. That shape is a **pattern you follow**
 (documented in the Rich Domain playbook), **not** code you inherit. The moment you try to force it
-into a base you must pass in *everything that differs* as parameters/delegates — at which point the
+into a base you must pass in _everything that differs_ as parameters/delegates — at which point the
 "base" is just a confusing wrapper around what you already wrote.
 
 ---
 
 ## Part 3 — Why C# itself refuses to help you here
 
-Even if you wanted to, the language pushes back — and understanding *why* cements the concept:
+Even if you wanted to, the language pushes back — and understanding _why_ cements the concept:
 
 1. **`static` factories aren't polymorphic.** `Create` is `static`; static methods are not inherited
    as overridable members. A base can't declare a `Create` that subclasses "override" the normal way.
 2. **A base cannot call a derived `private` constructor.** Construction is the derived type's secret;
-   the base has no access. So a base factory can only build the subtype if the subtype *hands it a
-   factory delegate* — you'd be injecting the very thing that varies.
-3. **`static abstract` interface members (C# 11+) exist — but don't help.** You *could* write
+   the base has no access. So a base factory can only build the subtype if the subtype _hands it a
+   factory delegate_ — you'd be injecting the very thing that varies.
+3. **`static abstract` interface members (C# 11+) exist — but don't help.** You _could_ write
    `interface IFactory<TSelf, TArgs> { static abstract Result<TSelf> Create(TArgs a); }`. But the
-   **body is still 100% per-entity**; the interface centralizes *a signature you can't even keep
-   uniform* (each entity's args differ), buying nothing while adding CRTP noise. Correctly rejected.
+   **body is still 100% per-entity**; the interface centralizes _a signature you can't even keep
+   uniform_ (each entity's args differ), buying nothing while adding CRTP noise. Correctly rejected.
 
 > Language friction is a design smell detector. When the compiler makes an abstraction awkward, it's
-> often telling you the abstraction is wrong. Here it's screaming *"this is policy, leave it local."*
+> often telling you the abstraction is wrong. Here it's screaming _"this is policy, leave it local."_
 
 ---
 
 ## Part 4 — What you SHOULD share for entities (the legitimate reuse)
 
-You *do* get reuse — just from the right tools. Three of them:
+You _do_ get reuse — just from the right tools. Three of them:
 
 ### 4.1 — Mechanics: already centralized in `ABaseEntity` / `AMasterEntity` ✅
 
@@ -168,9 +170,9 @@ are done.** The factory was never part of that set — and shouldn't be.
 
 ### 4.2 — Cross-cutting plumbing: a composition helper (optional, Rule of Three)
 
-The *only* thing that genuinely repeats across factory **bodies** is the error-accumulation dance:
+The _only_ thing that genuinely repeats across factory **bodies** is the error-accumulation dance:
 `new List<Error>()` … `if (r.IsFailure) errors.AddRange(r.Errors)` … `if (errors.Count > 0) return`.
-That's plumbing, not policy — so share it by **composition**, a helper you *use*, not inherit:
+That's plumbing, not policy — so share it by **composition**, a helper you _use_, not inherit:
 
 ```csharp
 namespace BookCart.Domain.Common.Result;
@@ -232,14 +234,14 @@ public static Result<Category> Create(string name, string? description)
 }
 ```
 
-> **Note the difference from a base class:** `ErrorCollector` is a *local variable* the factory
+> **Note the difference from a base class:** `ErrorCollector` is a _local variable_ the factory
 > **has**, not a parent it **is**. Category doesn't become a subtype of anything; it just borrows a
 > tool. That's composition — flexible, testable, no inheritance coupling. Introduce it once you feel
 > the plumbing three times (Rule of Three); before that, the plain `List<Error>` is clearer.
 
 ### 4.3 — A marker interface: `IAggregateRoot` (idiomatic, but NOT about `Create`)
 
-The *one* entity-level abstraction that IS standard DDD is a **marker** — it identifies which
+The _one_ entity-level abstraction that IS standard DDD is a **marker** — it identifies which
 entities are aggregate roots (the persistence/transaction boundaries), so repositories can constrain
 to them:
 
@@ -251,7 +253,7 @@ public class Category : AMasterEntity<CategoryId>, IAggregateRoot { … }
 // enables: IRepository<T> where T : class, IAggregateRoot
 ```
 
-It has **zero members** and nothing to do with construction. It's an *identity/role* marker, not a
+It has **zero members** and nothing to do with construction. It's an _identity/role_ marker, not a
 factory abstraction. Add it when you build repositories; it's the correct entity-level interface —
 the one you were reaching for, just serving a different purpose than `Create`.
 
@@ -262,19 +264,19 @@ the one you were reaching for, just serving a different purpose than `Create`.
 When a new "can I abstract this?" itch strikes, ask **in this order**:
 
 1. **Is the thing I'd hoist a MECHANIC (identical body) or POLICY (varying body)?**
-   - Mechanic + identical → **abstract base**. (IDs, single-value VOs.)
-   - Policy + varying → **do not inherit.** Go to 2.
+    - Mechanic + identical → **abstract base**. (IDs, single-value VOs.)
+    - Policy + varying → **do not inherit.** Go to 2.
 2. **Is there cross-cutting PLUMBING inside the varying bodies?**
-   - Yes → extract a **composition helper** you *use* (`ErrorCollector`, a guard clause, a spec).
-   - No → **leave it duplicated.** Distinct rules that merely *look* similar are **not** duplication
-     (DRY is about knowledge, not keystrokes — two rules that happen to both check length are two
-     decisions, not one).
+    - Yes → extract a **composition helper** you _use_ (`ErrorCollector`, a guard clause, a spec).
+    - No → **leave it duplicated.** Distinct rules that merely _look_ similar are **not** duplication
+      (DRY is about knowledge, not keystrokes — two rules that happen to both check length are two
+      decisions, not one).
 3. **Do I need to treat many types uniformly (repository, dispatcher)?**
-   - Yes → a **marker interface** (`IAggregateRoot`) or a **capability interface** (`IAuditable`) —
-     you already do this. That's role-typing, not logic-sharing.
+    - Yes → a **marker interface** (`IAggregateRoot`) or a **capability interface** (`IAuditable`) —
+      you already do this. That's role-typing, not logic-sharing.
 
 > **The trap to name:** "these two blocks look similar, so they should share a parent." Similar
-> *appearance* ≠ shared *reason to change*. Abstract on **shared reason to change** (that's SRP),
+> _appearance_ ≠ shared _reason to change_. Abstract on **shared reason to change** (that's SRP),
 > never on visual resemblance. Entity factories resemble each other and share **no** reason to
 > change — so they stay apart.
 
@@ -282,15 +284,15 @@ When a new "can I abstract this?" itch strikes, ask **in this order**:
 
 ## Part 6 — SOLID scorecard for the "don't abstract entity Create" decision
 
-| Principle | Why keeping factories local (and composing helpers) wins |
-|-----------|----------------------------------------------------------|
-| **SRP** | Each factory changes only when *its* aggregate's rules change. A shared base `Create` would change for *every* aggregate — the definition of a bad, magnet-for-edits class. |
-| **OCP** | Adding `Product` requires **zero** edits to existing code. A base factory would need modification (new branch/param) per aggregate — modifying to extend. |
-| **LSP** | There's no false "Product is-a GenericFactory" substitution to break, because we never asserted it. |
-| **ISP** | `IAggregateRoot` (empty) and `IAuditable` (tiny) keep interfaces minimal; nobody depends on a fat `IEntityFactory` they can't satisfy. |
-| **DIP** | Factories depend on abstractions they own (VOs, `Result`); no inversion is gained by a base factory. |
-| **Composition > inheritance** | `ErrorCollector` is *had*, not *inherited* — reuse without hierarchy coupling. |
-| **DRY (correctly scoped)** | We de-duplicate **plumbing** (ErrorCollector) and **mechanics** (ABaseEntity), never **rules**. |
+| Principle                     | Why keeping factories local (and composing helpers) wins                                                                                                                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SRP**                       | Each factory changes only when _its_ aggregate's rules change. A shared base `Create` would change for _every_ aggregate — the definition of a bad, magnet-for-edits class. |
+| **OCP**                       | Adding `Product` requires **zero** edits to existing code. A base factory would need modification (new branch/param) per aggregate — modifying to extend.                   |
+| **LSP**                       | There's no false "Product is-a GenericFactory" substitution to break, because we never asserted it.                                                                         |
+| **ISP**                       | `IAggregateRoot` (empty) and `IAuditable` (tiny) keep interfaces minimal; nobody depends on a fat `IEntityFactory` they can't satisfy.                                      |
+| **DIP**                       | Factories depend on abstractions they own (VOs, `Result`); no inversion is gained by a base factory.                                                                        |
+| **Composition > inheritance** | `ErrorCollector` is _had_, not _inherited_ — reuse without hierarchy coupling.                                                                                              |
+| **DRY (correctly scoped)**    | We de-duplicate **plumbing** (ErrorCollector) and **mechanics** (ABaseEntity), never **rules**.                                                                             |
 
 ---
 
@@ -312,13 +314,13 @@ ENTITY MECHANICS ALREADY CENTRALIZED (don't re-invent):
    ⇒ the entity's "AStronglyTypedId" is ABaseEntity. The factory is NOT part of it — by design.
 ```
 
-| Temptation | Why it's wrong | Do instead |
-|------------|----------------|------------|
-| `abstract Result<T> Create(...)` base for entities | body is 100% policy; nothing to inherit; signatures don't even match | per-aggregate `static Create`; document the *shape* as a convention |
-| `IEntityFactory<T>` interface with `Create` | static factories aren't polymorphic; args differ per entity → useless uniformity | nothing — or `ErrorCollector` for the plumbing |
-| Sharing rules because two factories "look alike" | resemblance ≠ shared reason to change; couples unrelated aggregates | keep separate; extract only true cross-cutting plumbing |
-| Putting event-raising in a base `Create` | which event differs per aggregate; timing is aggregate-specific | raise inside each aggregate's own factory (it owns its events) |
-| A base class just to hold `new List<Error>()` | that's composition's job, not inheritance's | `ErrorCollector` local variable |
+| Temptation                                         | Why it's wrong                                                                   | Do instead                                                          |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `abstract Result<T> Create(...)` base for entities | body is 100% policy; nothing to inherit; signatures don't even match             | per-aggregate `static Create`; document the _shape_ as a convention |
+| `IEntityFactory<T>` interface with `Create`        | static factories aren't polymorphic; args differ per entity → useless uniformity | nothing — or `ErrorCollector` for the plumbing                      |
+| Sharing rules because two factories "look alike"   | resemblance ≠ shared reason to change; couples unrelated aggregates              | keep separate; extract only true cross-cutting plumbing             |
+| Putting event-raising in a base `Create`           | which event differs per aggregate; timing is aggregate-specific                  | raise inside each aggregate's own factory (it owns its events)      |
+| A base class just to hold `new List<Error>()`      | that's composition's job, not inheritance's                                      | `ErrorCollector` local variable                                     |
 
 ---
 
@@ -331,4 +333,7 @@ ENTITY MECHANICS ALREADY CENTRALIZED (don't re-invent):
   a factory.
 - Decide future cases with one question: **mechanic-and-identical → inherit; policy-and-varying →
   compose or leave local.**
+
+```
+
 ```
